@@ -1,37 +1,23 @@
-from time import sleep
-import pandas as pd
+
 from selenium import webdriver
-import requests
-from bs4 import BeautifulSoup
-import os
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
-# URL de la página web a analizar
-url = "https://www.google.com/travel/flights/search"
+# Configuración del servicio de GeckoDriver
+service = FirefoxService('/Users/javi/geckodriver')
+driver = webdriver.Firefox(service=service)
+driver.get("https://www.google.com/travel/flights/search")
 
-# Realizar la solicitud GET a la página web
-response = requests.get(url)
+#driver.implicitly_wait(5)
 
-# Comprobar si la solicitud fue exitosa (código de estado 200)
-if response.status_code == 200:
-    # Crear un objeto BeautifulSoup con el contenido HTML de la página
-    soup = BeautifulSoup(response.content, "html.parser")
-    
-    # Encontrar todos los elementos HTML que contienen información sobre los productos
-    #products = soup.find_all("div", class_="product")
-    
-    # Iterar sobre cada elemento de producto encontrado
-    #for product in products:
-        # Extraer el nombre del producto
-     #   name = product.find("h2", class_="product-name").text.strip()
-        
-        # Extraer el precio del producto
-      #  price = product.find("span", class_="product-price").text.strip()
-        
-        # Imprimir el nombre y el precio del producto
-      #  print("Nombre del producto:", name)
-      #  print("Precio:", price)
-      #  print("-----------------------------------")
-
-else:
-    print("Error al acceder a la página:", response.status_code)
-
+try:
+    accept_cookies_button = WebDriverWait(driver, 10).until(
+        EC.element_to_be_clickable((By.XPATH, "//button[contains(text(), 'Rechazar Todo')]"))
+    )
+    accept_cookies_button.click()
+    print("Cookies rechazadas.")
+except:
+    print("No se encontró el botón de aceptar cookies o no era necesario.")
